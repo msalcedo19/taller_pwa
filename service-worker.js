@@ -1,8 +1,16 @@
 'use strict';
 
+const CACHE_NAME = 'static-cache-v3';
+const DATA_CACHE_NAME = 'data-cache-v1';
+
 self.addEventListener('install', (evt) => {
-  console.log('[ServiceWorker] Install');
-  if (evt.request.url.includes('/forecast/')) {
+  console.log('[ServiceWorker] Install');  
+});
+
+self.addEventListener('fetch', (evt) => {
+  console.log('[ServiceWorker] Fetch', evt.request.url);
+  // CODELAB: Add fetch event handler here.
+if (evt.request.url.includes('/schedules/')) {
   console.log('[Service Worker] Fetch (data)', evt.request.url);
   evt.respondWith(
       caches.open(DATA_CACHE_NAME).then((cache) => {
@@ -28,5 +36,4 @@ evt.respondWith(
           });
     })
 );
-  
 });
