@@ -9,7 +9,7 @@ const FILES_TO_CACHE = [
   '/scripts/app.js',
   '/styles/inline.css',
   '/images/ic_add_white_24px.svg',
-  '/images/ic_refresh_white_24px.svg'
+  '/images/ic_refresh_white_24px.svg',
 ];
 
 self.addEventListener('install', (evt) => {
@@ -50,6 +50,7 @@ self.addEventListener('fetch', (evt) => {
               console.log("entre0");
               if (response.status === 200) {
                 console.log("entre1");
+                console.log(response.clone());
                 cache.put(evt.request.url, response.clone());
               }
               return response;
