@@ -1,5 +1,6 @@
 (function () {
     'use strict';
+  console.log("agua paso por aquí.");
 
     var app = {
         isLoading: true,
@@ -180,7 +181,7 @@
      *   SimpleDB (https://gist.github.com/inexorabletash/c8069c042b734519680c)
      ************************************************************************/
 
-    app.getSchedule('metros/1/bastille/A', 'Bastille, Direction La Défense');
+    //app.getSchedule('metros/1/bastille/A', 'Bastille, Direction La Défense');
     app.selectedTimetables = [
         {key: initialStationTimetable.key, label: initialStationTimetable.label}
     ];
