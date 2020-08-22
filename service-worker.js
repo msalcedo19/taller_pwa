@@ -1,10 +1,9 @@
 'use strict';
 
-const CACHE_NAME = 'static-cache-v0';
-const DATA_CACHE_NAME = 'data-cache-v0';
+const CACHE_NAME = 'static-cache-v1';
+const DATA_CACHE_NAME = 'data-cache-v1';
 
 const FILES_TO_CACHE = [
-  '/',
   '/index.html',
   '/scripts/app.js',
   '/styles/inline.css',
@@ -47,16 +46,13 @@ self.addEventListener('fetch', (evt) => {
         return fetch(evt.request)
             .then((response) => {
               // If the response was good, clone it and store it in the cache.
-              console.log("entre0");
               if (response.status === 200) {
-                console.log("entre1");
                 console.log(response.clone());
                 cache.put(evt.request.url, response.clone());
               }
               return response;
             }).catch((err) => {
               // Network request failed, try to get it from the cache.
-          console.log("entre2");
               return cache.match(evt.request);
             });
       }));
