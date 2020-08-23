@@ -1,7 +1,18 @@
 {
   "name": "Paris Metro 1",
   "short_name": "Paris Metro 1",
-  "icons": [],
+  "icons": [
+        {
+            "src": "https://cdn.glitch.com/f81b1da9-f360-44da-846e-49c0f8964222%2Fandroid-chrome-192x192.png?v=1598146728535",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "https://cdn.glitch.com/f81b1da9-f360-44da-846e-49c0f8964222%2Fandroid-chrome-512x512.png?v=1598146676023",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
   "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#3E4EB8",
