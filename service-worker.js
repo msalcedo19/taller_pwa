@@ -22,8 +22,7 @@ const DATA_CACHE_NAME = 'data-cache-v1';
     ]
   })
 );*/
-var idb = self.indexedDB.open("taller1_db", 1);
-var dbPromise = idb.open('taller1_db', 2, function(upgradeDb) {
+var dbPromise = self.indexedDB.open('taller1_db', 2, function(upgradeDb) {
     console.log('making a new object store');
     if (!upgradeDb.objectStoreNames.contains('metros')) {
       var metrosObject = upgradeDb.createObjectStore('metros', {autoIncrement:true});
@@ -31,8 +30,9 @@ var dbPromise = idb.open('taller1_db', 2, function(upgradeDb) {
     }
 });
 
-dbPromise.then(function(db) {
-  var tx = db.transaction('taller1_db', 'readwrite');
+dbPromise.onsucess = function(event){
+  var db = event.target.result;
+  var tx = dbPromise.transaction('taller1_db', 'readwrite');
   var store = tx.objectStore('metros');
   var item = {
     name: 'sandwich',
@@ -41,10 +41,9 @@ dbPromise.then(function(db) {
     created: new Date().getTime()
   };
   store.add(item);
-  return tx.complete;
-}).then(function() {
-  console.log('added item to the store os!');
-});
+}
+
+  
 
 
 self.addEventListener('activate', (evt) => {
