@@ -18,7 +18,6 @@
       }
       var api_url = 'https://api-ratp.pierre-grimaud.fr/v3';
       const url = `${api_url}/schedules/${key}`;
-      console.log(url);
       return caches.match(url)
           .then((response) => {
             if (response) {
@@ -132,29 +131,46 @@
 
 
     app.getSchedule = function (key, label) {
-        var url = 'https://api-ratp.pierre-grimaud.fr/v3/schedules/' + key;
-      
-        var request = new XMLHttpRequest();
-        request.onreadystatechange = function () {
-            if (request.readyState === XMLHttpRequest.DONE) {
-                get_data_from_cache(key).then(data => console.log(data));
-                console.log('cate que no lo vi.');
-                if (request.status === 200) {
-                    var response = JSON.parse(request.response);
-                    var result = {};
-                    result.key = key;
-                    result.label = label;
-                    result.created = response._metadata.date;
-                    result.schedules = response.result.schedules;
-                    app.updateTimetableCard(result);
-                }
-            } else {
-                // Return the initial weather forecast since no data is available.
-                app.updateTimetableCard(initialStationTimetable);
+        console.log(key);
+        console.log(label);
+        get_data_from_cache(key).then(data => {
+            if(data!=null){
+                console.log("entre a preguntar al cache.");
+                console.log(data);
+                var response = data;
+                var result = {};
+                result.key = key;
+                result.label = label;
+                result.created = response._metadata.date;
+                result.schedules = response.result.schedules;
+                app.updateTimetableCard(result);           
             }
-        };
-        request.open('GET', url);
-        request.send();
+            else {
+              console.log("entre a preguntar a la red.");
+              var url = 'https://api-ratp.pierre-grimaud.fr/v3/schedules/' + key;
+      
+              var request = new XMLHttpRequest();
+              request.onreadystatechange = function () {
+                  if (request.readyState === XMLHttpRequest.DONE) {
+                      if (request.status === 200) {
+                          var response = JSON.parse(request.response);
+                          var result = {};
+                          result.key = key;
+                          result.label = label;
+                          result.created = response._metadata.date;
+                          result.schedules = response.result.schedules;
+                          app.updateTimetableCard(result);
+                      }
+                  } else {
+                      // Return the initial weather forecast since no data is available.
+                      app.updateTimetableCard(initialStationTimetable);
+                  }
+              };
+              request.open('GET', url);
+              request.send();
+            }
+          }
+        );
     };
 
     // Iterate all of the cards and attempt to get the latest timetable data
