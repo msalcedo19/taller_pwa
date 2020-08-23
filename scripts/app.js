@@ -1,5 +1,7 @@
 (function () {
     'use strict';
+  
+    var first_load = true;
 
     var app = {
         isLoading: true,
@@ -144,12 +146,18 @@
             else {
               console.log("entre a preguntar a la red.");
               var url = 'https://api-ratp.pierre-grimaud.fr/v3/schedules/' + key;
-      
+              
               var request = new XMLHttpRequest();
               request.onreadystatechange = function () {
                   if (request.readyState === XMLHttpRequest.DONE) {
                       if (request.status === 200) {
                           var response = JSON.parse(request.response);
+                        
+                          caches.open('data-cache-v3').then((cache) => {
+                              // If the response was good, clone it and store it in the cache.
+                              cache.put(url, response.clone());
+                          });
+                        
                           var result = {};
                           result.key = key;
                           result.label = label;
