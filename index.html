@@ -104,14 +104,13 @@
   <!-- Uncomment the line below when ready to test with fake data -->
   <script src="scripts/app.js" async></script>
   <script> 
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js')
-            .then((reg) => {
-              console.log('Service worker registered.', reg);
-            });
-      });
-    }
+      if ('serviceWorker' in navigator) {
+        // Esperamos al evento load para registrar nuestro service worker
+        window.addEventListener('load', () => {
+        // Registramos el service worker
+        navigator.serviceWorker.register('/serviceWorker.js');
+        });
+      }
   </script>
   
 </body>
