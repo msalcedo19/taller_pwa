@@ -22,15 +22,10 @@ const DATA_CACHE_NAME = 'data-cache-v1';
     ]
   })
 );*/
-var dbPromise = self.indexedDB.open('taller1_db', 2, function(upgradeDb) {
-    console.log('making a new object store');
-    if (!upgradeDb.objectStoreNames.contains('metros')) {
-      var metrosObject = upgradeDb.createObjectStore('metros', {autoIncrement:true});
-      metrosObject.createIndex('data', 'data', {unique: false});
-    }
-});
+var dbPromise = self.indexedDB.open("taller1_db", 1);
 
 dbPromise.onsucess = function(event){
+  console.log("entre");
   var db = event.target.result;
   var tx = dbPromise.transaction('taller1_db', 'readwrite');
   var store = tx.objectStore('metros');
@@ -41,6 +36,7 @@ dbPromise.onsucess = function(event){
     created: new Date().getTime()
   };
   store.add(item);
+  tx.complete
 }
 
   
