@@ -62,13 +62,13 @@ self.addEventListener('fetch', (evt) => {
   if (evt.request.url.includes('/schedules/')) {
     console.log('[Service Worker] Fetch (data) from url /schedules/', evt.request.url);
 
-    const cacheFirst = new strategies.CacheFirst({cacheName: 'data-cache'});
+    const cacheFirst = new strategies.CacheFirst({cacheName: DATA_CACHE_NAME});
     cacheFirst.handle({request: evt.request});
     evt.respondWith(cacheFirst.handle({request: evt.request}));
   }
   else{
     console.log('[Service Worker] Fetch (static-data)', evt.request.url);
-    const cacheFirst = new strategies.CacheFirst({cacheName: 'static-files'});
+    const cacheFirst = new strategies.CacheFirst({cacheName: CACHE_NAME});
     cacheFirst.handle({request: evt.request})
     evt.respondWith(cacheFirst.handle({request: evt.request}));
   }
