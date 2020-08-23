@@ -43,7 +43,7 @@ workbox.routing.registerRoute(
   })
 );
 
-workbox.routing.registerRoute(
+/*workbox.routing.registerRoute(
    ({request}) => request.destination === 'style',
   new workbox.strategies.CacheFirst({
     cacheName: 'static-files',
@@ -54,17 +54,17 @@ workbox.routing.registerRoute(
       })
     ]
   })
-);
+);*/
 
-workbox.routing.registerRoute(
-   ({request}) => request.destination === '',
-  new workbox.strategies.CacheFirst({
-    cacheName: 'static-files',
-    plugins: [
-      new workbox.expiration.ExpirationPlugin({
-        maxEntries: 50,
-        maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
-      })
-    ]
-  })
-);
+const {strategies} = workbox;
+
+self.addEventListener('fetch', (event) => {
+  console.log("entreee");
+  if (event.request.url.endsWith('.css')) {
+    console.log("entree22");
+    // Using the previously-initialized strategies will work as expected.
+    const cacheFirst = new strategies.CacheFirst({cacheName: 'static-files'});
+    cacheFirst.handle({request: event.request}).then(data=> console.log(data.body));
+    event.respondWith(cacheFirst.handle({request: event.request}));
+  }
+});
