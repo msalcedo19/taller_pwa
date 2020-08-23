@@ -22,17 +22,13 @@ const DATA_CACHE_NAME = 'data-cache-v1';
     ]
   })
 );*/
-
-function createDB() {
-  idb.open('products', 1, function(upgradeDB) {
-    var store = upgradeDB.createObjectStore('beverages', {
-      keyPath: 'id'
-    });
-    store.put({id: 123, name: 'coke', price: 10.99, quantity: 200});
-    store.put({id: 321, name: 'pepsi', price: 8.99, quantity: 100});
-    store.put({id: 222, name: 'water', price: 11.99, quantity: 300});
-  });
-}
+var idb = self.indexedDB.open("taller1_db", 1);
+var dbPromise = idb.open('taller1_db', 2, function(upgradeDb) {
+    console.log('making a new object store');
+    if (!upgradeDb.objectStoreNames.contains('metros')) {
+      upgradeDb.createObjectStore('metros');
+    }
+});
 
 self.addEventListener('activate', (evt) => {
   console.log('[ServiceWorker] Activate');
@@ -57,7 +53,6 @@ self.addEventListener('activate', (evt) => {
       }
     });
   });
-  createDB()
 });
 
 const {strategies} = workbox;
