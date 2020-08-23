@@ -1,7 +1,5 @@
 'use strict';
 
-var first_load = true;
-
 const CACHE_NAME = 'static-cache-v3';
 const DATA_CACHE_NAME = 'data-cache-v3';
 
@@ -38,9 +36,14 @@ self.addEventListener('activate', (evt) => {
     })
   );
   self.clients.claim();
-  fetch().then((response)=>{
-    
-    if
+  
+  const url = 'https://api-ratp.pierre-grimaud.fr/v3/schedules/metros/1/bastille/A';
+  caches.open(DATA_CACHE_NAME).then((cache) => {
+    fetch(url).then((response)=>{
+      if(response.status === 200){
+        cache.put(url, response.clone());
+      }
+    });
   });
 });
 
