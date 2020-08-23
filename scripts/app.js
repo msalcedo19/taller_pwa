@@ -118,6 +118,7 @@
 function getSchedulesFromNetwork(key) {
   return fetch('https://api-ratp.pierre-grimaud.fr/v3/schedules/' + key)
       .then((response) => {
+    console.log(response);
         return response.json();
       })
       .catch(() => {
@@ -141,6 +142,7 @@ function getSchedulesFromCache(key) {
     return caches.match(url)
         .then((response) => {
           if (response) {
+            console.log(response);
             return response.json();
           }
           return null;

@@ -7,6 +7,9 @@ if (workbox) {
   console.log(`Boo! Workbox didn't load 😬`);
 }
 
+const CACHE_NAME = 'static-cache-v1';
+const DATA_CACHE_NAME = 'data-cache-v1';
+
 /*workbox.routing.registerRoute(
    ({request}) => request.destination === 'script',
   new workbox.strategies.CacheFirst({
@@ -19,6 +22,31 @@ if (workbox) {
     ]
   })
 );*/
+
+self.addEventListener('activate', (evt) => {
+  console.log('[ServiceWorker] Activate');
+  // CODELAB: Remove previous cached data from disk.
+  evt.waitUntil(
+    caches.keys().then((keyList) => {
+      return Promise.all(keyList.map((key) => {
+        if (key !== CACHE_NAME && key !== DATA_CACHE_NAME) {
+          console.log('[ServiceWorker] Removing old cache', key);
+          return caches.delete(key);
+        }
+      }));
+    })
+  );
+  self.clients.claim();
+  
+  const url = 'https://api-ratp.pierre-grimaud.fr/v3/schedules/metros/1/bastille/A';
+  caches.open(DATA_CACHE_NAME).then((cache) => {
+    fetch(url).then((response)=>{
+      if(response.status === 200){
+        cache.put(url, response.clone());
+      }
+    });
+  });
+});
 
 const {strategies} = workbox;
 
