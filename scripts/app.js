@@ -113,7 +113,10 @@
 
     app.getSchedule = function (key, label) {
         var url = 'https://api-ratp.pierre-grimaud.fr/v3/schedules/' + key;
-
+        console.log("dasdasda");
+        var data = get_data_from_cache(key);
+        console.log('cate que no lo vi.');
+        console.log(data);
         var request = new XMLHttpRequest();
         request.onreadystatechange = function () {
             if (request.readyState === XMLHttpRequest.DONE) {
@@ -185,4 +188,22 @@
     app.selectedTimetables = [
         {key: initialStationTimetable.key, label: initialStationTimetable.label}
     ];
+  
+  var get_data_from_cache = function(key){
+    if (!('caches' in window)) {
+      return null;
+    }
+    const url = `${window.location.origin}/schedules/${key}`;
+    return caches.match(url)
+        .then((response) => {
+          if (response) {
+            return response.json();
+          }
+          return null;
+        })
+        .catch((err) => {
+          console.error('Error getting data from cache', err);
+          return null;
+        });
+  }
 })();
