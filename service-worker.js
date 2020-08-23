@@ -18,3 +18,16 @@ if (workbox) {
 } else {
   console.log(`Boo! Workbox didn't load 😬`);
 }
+
+workbox.routing.registerRoute(
+   /\.(?:js|css)$/,
+  workbox.strategies.CacheFirst({
+    cacheName: 'static-files',
+    plugins: [
+      new workbox.expiration.ExpirationPlugin({
+        maxEntries: 50,
+        maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
+      })
+    ]
+  })
+);
