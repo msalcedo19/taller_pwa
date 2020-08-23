@@ -13,15 +13,52 @@ self.addEventListener('fetch', (event) => {
 if (workbox) {
   console.log(`Yay! Workbox is loaded 🎉`);
 
-  workbox.precaching.precacheAndRoute([]);
-
 } else {
   console.log(`Boo! Workbox didn't load 😬`);
 }
 
 workbox.routing.registerRoute(
-   /\.(?:js|css)$/,
-  workbox.strategies.CacheFirst({
+   ({request}) => request.destination === 'script',
+  new workbox.strategies.CacheFirst({
+    cacheName: 'static-files',
+    plugins: [
+      new workbox.expiration.ExpirationPlugin({
+        maxEntries: 50,
+        maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
+      })
+    ]
+  })
+);
+
+workbox.routing.registerRoute(
+   ({request}) => request.destination === 'image',
+  new workbox.strategies.CacheFirst({
+    cacheName: 'static-files',
+    plugins: [
+      new workbox.expiration.ExpirationPlugin({
+        maxEntries: 50,
+        maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
+      })
+    ]
+  })
+);
+
+workbox.routing.registerRoute(
+   ({request}) => request.destination === 'style',
+  new workbox.strategies.CacheFirst({
+    cacheName: 'static-files',
+    plugins: [
+      new workbox.expiration.ExpirationPlugin({
+        maxEntries: 50,
+        maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
+      })
+    ]
+  })
+);
+
+workbox.routing.registerRoute(
+   ({request}) => request.destination === '',
+  new workbox.strategies.CacheFirst({
     cacheName: 'static-files',
     plugins: [
       new workbox.expiration.ExpirationPlugin({
