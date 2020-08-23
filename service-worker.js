@@ -22,32 +22,6 @@ const DATA_CACHE_NAME = 'data-cache-v1';
     ]
   })
 );*/
-var dbPromise = self.indexedDB.open("taller1_db", 1);
-upgradeDb.createObjectStore('firstOS');
-
-dbPromise.onerror = function(event) {
-  // Do something with request.errorCode!
-  console.log("asdasd");
-};
-
-dbPromise.onsuccess = function(event){
-  console.log("entre");
-  var db = event.target.result;
-  var tx = db.transaction(['metros'], 'readwrite');
-  var store = tx.objectStore('metro');
-  var item = {
-    name: 'sandwich',
-    price: 4.99,
-    description: 'A very tasty sandwich',
-    created: new Date().getTime()
-  };
-  store.add(item);
-  tx.complete
-}
-
-
-  
-
 
 self.addEventListener('activate', (evt) => {
   console.log('[ServiceWorker] Activate');
@@ -87,12 +61,36 @@ self.addEventListener('fetch', (evt) => {
   
   if (evt.request.url.includes('/schedules/')) {
     //console.log('[Service Worker] Fetch (data) from url /schedules/', evt.request.url);
+    fetch(evt.request).then((response)=>{
+      
+        var dbPromise = self.indexedDB.open("taller1_db", 1);
 
-    const cacheFirst = new strategies.CacheFirst({cacheName: DATA_CACHE_NAME});
-    cacheFirst.handle({request: evt.request});
-    evt.respondWith(cacheFirst.handle({request: evt.request}));
-    
-    
+        dbPromise.onerror = function(event) {
+          // Do something with request.errorCode!
+          console.log("error");
+        };
+
+        dbPromise.onupgradeneeded = function(event) { 
+          // Save the IDBDatabase interface 
+          console.log("entre en updgtesa");
+          var db = event.target.result;
+          if (!db.objectStoreNames.contains('metros')) {
+            // Create an objectStore for this database
+            db.createObjectStore("metros", {keyPath: evt.request});
+          }
+        };
+
+        dbPromise.onsuccess = function(event){
+          console.log("entre");
+          var db = event.target.result;
+          var tx = db.transaction(['metros'], 'readwrite');
+          var store = tx.objectStore('metros');;
+          store.add(response);
+          tx.complete
+        }
+      
+        evt.respondWith(response);
+    });
   }
   else{
     //console.log('[Service Worker] Fetch (static-data)', evt.request.url);
