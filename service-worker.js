@@ -1,5 +1,7 @@
 'use strict';
 
+var first_load = true;
+
 const CACHE_NAME = 'static-cache-v3';
 const DATA_CACHE_NAME = 'data-cache-v3';
 
@@ -36,6 +38,10 @@ self.addEventListener('activate', (evt) => {
     })
   );
   self.clients.claim();
+  fetch().then((response)=>{
+    
+    if
+  });
 });
 
 self.addEventListener('fetch', (evt) => {

@@ -1,8 +1,6 @@
 (function () {
     'use strict';
   
-    var first_load = true;
-
     var app = {
         isLoading: true,
         visibleCards: {},
@@ -118,7 +116,7 @@
  * @return {Object} The weather forecast, if the request fails, return null.
  */
 function getSchedulesFromNetwork(key) {
-  return fetch(`/schedules/${key}`)
+  return fetch('https://api-ratp.pierre-grimaud.fr/v3/schedules/' + key)
       .then((response) => {
         return response.json();
       })
@@ -157,6 +155,7 @@ function getSchedulesFromCache(key) {
 
     app.getSchedule = function (key, label) {
         getSchedulesFromCache(key).then(data => {
+          console.log('pregunte al cache');
             if(data!=null){
                 var response = data;
                 var result = {};
@@ -171,7 +170,14 @@ function getSchedulesFromCache(key) {
         getSchedulesFromNetwork(key).then(data => {
             if(data!=null){
               console.log("entre a preguntar a la red.");
-              var url = 'https://api-ratp.pierre-grimaud.fr/v3/schedules/' + key;
+              var response = data;
+              var result = {};
+              result.key = key;
+              result.label = label;
+              result.created = response._metadata.date;
+              result.schedules = response.result.schedules;
+              app.updateTimetableCard(result);   
+              /*var url = 'https://api-ratp.pierre-grimaud.fr/v3/schedules/' + key;
               var request = new XMLHttpRequest();
               request.onreadystatechange = function () {
                   if (request.readyState === XMLHttpRequest.DONE) {
@@ -199,7 +205,7 @@ function getSchedulesFromCache(key) {
                   }
               };
               request.open('GET', url);
-              request.send();
+              request.send();*/
             }
           
         });     
