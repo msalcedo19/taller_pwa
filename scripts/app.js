@@ -16,7 +16,8 @@
       if (!('caches' in window)) {
         return null;
       }
-      const url = `${window.location.origin}/schedules/${key}`;
+      var api_url = 'https://api-ratp.pierre-grimaud.fr/v3';
+      const url = `${api_url}/schedules/${key}`;
       console.log(url);
       return caches.match(url)
           .then((response) => {
