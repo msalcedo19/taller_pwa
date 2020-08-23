@@ -1,7 +1,7 @@
 'use strict';
 
-const CACHE_NAME = 'static-cache-v1';
-const DATA_CACHE_NAME = 'data-cache-v1';
+const CACHE_NAME = 'static-cache-v3';
+const DATA_CACHE_NAME = 'data-cache-v3';
 
 const FILES_TO_CACHE = [
   '/index.html',
@@ -47,7 +47,7 @@ self.addEventListener('fetch', (evt) => {
             .then((response) => {
               // If the response was good, clone it and store it in the cache.
               if (response.status === 200) {
-                console.log(response.clone());
+                console.log(evt.request.url);
                 cache.put(evt.request.url, response.clone());
               }
               return response;
