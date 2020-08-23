@@ -23,12 +23,18 @@ const DATA_CACHE_NAME = 'data-cache-v1';
   })
 );*/
 var dbPromise = self.indexedDB.open("taller1_db", 1);
+upgradeDb.createObjectStore('firstOS');
 
-dbPromise.onsucess = function(event){
+dbPromise.onerror = function(event) {
+  // Do something with request.errorCode!
+  console.log("asdasd");
+};
+
+dbPromise.onsuccess = function(event){
   console.log("entre");
   var db = event.target.result;
-  var tx = dbPromise.transaction('taller1_db', 'readwrite');
-  var store = tx.objectStore('metros');
+  var tx = db.transaction(['metros'], 'readwrite');
+  var store = tx.objectStore('metro');
   var item = {
     name: 'sandwich',
     price: 4.99,
@@ -38,6 +44,7 @@ dbPromise.onsucess = function(event){
   store.add(item);
   tx.complete
 }
+
 
   
 
