@@ -23,6 +23,17 @@ const DATA_CACHE_NAME = 'data-cache-v1';
   })
 );*/
 
+function createDB() {
+  idb.open('products', 1, function(upgradeDB) {
+    var store = upgradeDB.createObjectStore('beverages', {
+      keyPath: 'id'
+    });
+    store.put({id: 123, name: 'coke', price: 10.99, quantity: 200});
+    store.put({id: 321, name: 'pepsi', price: 8.99, quantity: 100});
+    store.put({id: 222, name: 'water', price: 11.99, quantity: 300});
+  });
+}
+
 self.addEventListener('activate', (evt) => {
   console.log('[ServiceWorker] Activate');
   // CODELAB: Remove previous cached data from disk.
@@ -46,6 +57,7 @@ self.addEventListener('activate', (evt) => {
       }
     });
   });
+  createDB()
 });
 
 const {strategies} = workbox;
@@ -60,14 +72,16 @@ self.addEventListener('fetch', (evt) => {
   }*/
   
   if (evt.request.url.includes('/schedules/')) {
-    console.log('[Service Worker] Fetch (data) from url /schedules/', evt.request.url);
+    //console.log('[Service Worker] Fetch (data) from url /schedules/', evt.request.url);
 
     const cacheFirst = new strategies.CacheFirst({cacheName: DATA_CACHE_NAME});
     cacheFirst.handle({request: evt.request});
     evt.respondWith(cacheFirst.handle({request: evt.request}));
+    
+    
   }
   else{
-    console.log('[Service Worker] Fetch (static-data)', evt.request.url);
+    //console.log('[Service Worker] Fetch (static-data)', evt.request.url);
     const cacheFirst = new strategies.CacheFirst({cacheName: CACHE_NAME});
     cacheFirst.handle({request: evt.request})
     evt.respondWith(cacheFirst.handle({request: evt.request}));
