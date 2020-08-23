@@ -1,6 +1,6 @@
 (function () {
     'use strict';
-  console.log("agua paso por aquí.");
+    console.log("agua paso por aquí.");
 
     var app = {
         isLoading: true,
@@ -132,7 +132,6 @@
 
     app.getSchedule = function (key, label) {
         console.log(key);
-        console.log(label);
         get_data_from_cache(key).then(data => {
             if(data!=null){
                 console.log("entre a preguntar al cache.");
@@ -223,4 +222,6 @@
     app.selectedTimetables = [
         {key: initialStationTimetable.key, label: initialStationTimetable.label}
     ];
+  
+    
 })();
