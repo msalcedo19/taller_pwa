@@ -115,10 +115,9 @@
  * @param {string} coords Location object to.
  * @return {Object} The weather forecast, if the request fails, return null.
  */
-function getSchedulesFromNetwork(key) {
+function getSchedules(key) {
   return fetch('https://api-ratp.pierre-grimaud.fr/v3/schedules/' + key)
       .then((response) => {
-    console.log(response);
         return response.json();
       })
       .catch(() => {
@@ -142,7 +141,6 @@ function getSchedulesFromCache(key) {
     return caches.match(url)
         .then((response) => {
           if (response) {
-            console.log(response);
             return response.json();
           }
           return null;
@@ -156,7 +154,7 @@ function getSchedulesFromCache(key) {
 
 
     app.getSchedule = function (key, label) {
-        getSchedulesFromCache(key).then(data => {
+        getSchedules(key).then(data => {
           console.log('pregunte al cache');
             if(data!=null){
                 var response = data;
@@ -169,7 +167,7 @@ function getSchedulesFromCache(key) {
             }
         });
       
-        getSchedulesFromNetwork(key).then(data => {
+        /*getSchedulesFromNetwork(key).then(data => {
             if(data!=null){
               console.log("entre a preguntar a la red.");
               var response = data;
@@ -179,7 +177,7 @@ function getSchedulesFromCache(key) {
               result.created = response._metadata.date;
               result.schedules = response.result.schedules;
               app.updateTimetableCard(result);   
-              /*var url = 'https://api-ratp.pierre-grimaud.fr/v3/schedules/' + key;
+              var url = 'https://api-ratp.pierre-grimaud.fr/v3/schedules/' + key;
               var request = new XMLHttpRequest();
               request.onreadystatechange = function () {
                   if (request.readyState === XMLHttpRequest.DONE) {
