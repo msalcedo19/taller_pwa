@@ -121,6 +121,7 @@ function getSchedules(key) {
         return response.json();
       })
       .catch(() => {
+    console.log("asdas");
         return null;
       });
 }
@@ -166,6 +167,7 @@ function getSchedulesFromCache(key) {
                 app.updateTimetableCard(result);           
             }
         });
+    }
       
         /*getSchedulesFromNetwork(key).then(data => {
             if(data!=null){
@@ -206,10 +208,7 @@ function getSchedulesFromCache(key) {
               };
               request.open('GET', url);
               request.send();*/
-            }
-          
-        });     
-    };
+   
 
     // Iterate all of the cards and attempt to get the latest timetable data
     app.updateSchedules = function () {

@@ -69,7 +69,7 @@ self.addEventListener('activate', (evt) => {
             var db = event.target.result;
             var tx = db.transaction(['metros'], 'readwrite');
             var store = tx.objectStore('metros');
-            var data = json.result;
+            var data = json;
             data['url'] = url;
             console.log(data);
             store.add(data);
@@ -80,6 +80,35 @@ self.addEventListener('activate', (evt) => {
       }
   });
 });
+
+function verify(key){
+  var dbPromise = self.indexedDB.open("taller1_db", 1);
+  dbPromise.onerror = function(event) {
+    // Do something with request.errorCode!
+    console.log("error");
+  };
+
+  dbPromise.onupgradeneeded = function(event) { 
+    // Save the IDBDatabase interface 
+    var db = event.target.result;
+    if (!db.objectStoreNames.contains('metros')) {
+      // Create an objectStore for this database
+      db.createObjectStore("metros", {keyPath: 'url'});
+    }
+  };
+
+  dbPromise.onsuccess = function(event){
+    var db = event.target.result;
+    var transaction = db.transaction(["customers"]);
+    var objectStore = transaction.objectStore("customers");
+var request = objectStore.get("444-44-4444");
+    return request.onsuccess = function(event) {
+     // Hacer algo cuando se obtenga el registro.
+      console.log(event);
+      return true;
+    };
+  }
+}
 
 const {strategies} = workbox;
 
@@ -94,6 +123,7 @@ self.addEventListener('fetch', (evt) => {
   
   if (evt.request.url.includes('/schedules/')) {
     //console.log('[Service Worker] Fetch (data) from url /schedules/', evt.request.url);
+      console.log(verify(evt.request));
       evt.respondWith(
         fetch(evt.request).then((response)=>{
           if(response.status === 200){
@@ -118,7 +148,7 @@ self.addEventListener('fetch', (evt) => {
                 var db = event.target.result;
                 var tx = db.transaction(['metros'], 'readwrite');
                 var store = tx.objectStore('metros');
-                var data = json.result;
+                var data = json;
                 data['url'] = evt.request.url;
                 console.log(data);
                 store.add(data);
