@@ -71,29 +71,28 @@ self.addEventListener('fetch', (evt) => {
 
         dbPromise.onupgradeneeded = function(event) { 
           // Save the IDBDatabase interface 
-          console.log("entre en updgtesa");
           var db = event.target.result;
           if (!db.objectStoreNames.contains('metros')) {
+            console.log("entre en updgtesa");
             // Create an objectStore for this database
             db.createObjectStore("metros", {keyPath: 'url'});
           }
         };
       evt.respondWith(
-      fetch(evt.request).then((response)=>{
+        fetch(evt.request).then((response)=>{
 
-          dbPromise.onsuccess = function(event){
-            console.log("entre");
-            var db = event.target.result;
-            var tx = db.transaction(['metros'], 'readwrite');
-            var store = tx.objectStore('metros');
-            var cln = response.json();
-            console.log(cln.then(data => console.log(data)));
-            store.add(cln);
-            tx.complete
-            return response;
-          }
-        return;
-      })
+            dbPromise.onsuccess = function(event){
+              console.log("entre");
+              var db = event.target.result;
+              var tx = db.transaction(['metros'], 'readwrite');
+              var store = tx.objectStore('metros');
+              var cln = response.clone();
+              store.add(cln);
+              tx.complete
+              return response;
+            }
+          return response;
+        })
       );
   }
   else{
