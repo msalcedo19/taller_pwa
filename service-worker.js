@@ -65,8 +65,8 @@ self.addEventListener('fetch', (evt) => {
         fetch(evt.request).then((response)=>{
           if(response.status === 200){
             var dbPromise = self.indexedDB.open("taller1_db", 1);
-            var clone1 = response;
-            console.log(clone1.body;
+            var clone1 = response.data();
+            console.log(clone1);
             dbPromise.onerror = function(event) {
               // Do something with request.errorCode!
               console.log("error");
