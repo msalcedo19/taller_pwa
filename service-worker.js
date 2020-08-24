@@ -39,12 +39,45 @@ self.addEventListener('activate', (evt) => {
   self.clients.claim();
   
   const url = 'https://api-ratp.pierre-grimaud.fr/v3/schedules/metros/1/bastille/A';
-  caches.open(DATA_CACHE_NAME).then((cache) => {
+  /*caches.open(DATA_CACHE_NAME).then((cache) => {
     fetch(url).then((response)=>{
       if(response.status === 200){
         cache.put(url, response.clone());
       }
     });
+  });*/
+  fetch(url).then((response)=>{
+      if(response.status === 200){
+        return response.json().then(function(json) {
+          // process your JSON further
+          var dbPromise = self.indexedDB.open("taller1_db", 1);
+          dbPromise.onerror = function(event) {
+            // Do something with request.errorCode!
+            console.log("error");
+          };
+
+          dbPromise.onupgradeneeded = function(event) { 
+            // Save the IDBDatabase interface 
+            var db = event.target.result;
+            if (!db.objectStoreNames.contains('metros')) {
+              // Create an objectStore for this database
+              db.createObjectStore("metros", {keyPath: 'url'});
+            }
+          };
+
+          dbPromise.onsuccess = function(event){
+            var db = event.target.result;
+            var tx = db.transaction(['metros'], 'readwrite');
+            var store = tx.objectStore('metros');
+            var data = json.result;
+            data['url'] = url;
+            console.log(data);
+            store.add(data);
+            tx.complete
+          }
+          return json.result
+        });
+      }
   });
 });
 
