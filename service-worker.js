@@ -61,37 +61,37 @@ self.addEventListener('fetch', (evt) => {
   
   if (evt.request.url.includes('/schedules/')) {
     //console.log('[Service Worker] Fetch (data) from url /schedules/', evt.request.url);
-        
-        var dbPromise = self.indexedDB.open("taller1_db", 1);
-
-        dbPromise.onerror = function(event) {
-          // Do something with request.errorCode!
-          console.log("error");
-        };
-
-        dbPromise.onupgradeneeded = function(event) { 
-          // Save the IDBDatabase interface 
-          var db = event.target.result;
-          if (!db.objectStoreNames.contains('metros')) {
-            console.log("entre en updgtesa");
-            // Create an objectStore for this database
-            db.createObjectStore("metros", {keyPath: 'url'});
-          }
-        };
       evt.respondWith(
         fetch(evt.request).then((response)=>{
+          if(response.status === 200){
+            var dbPromise = self.indexedDB.open("taller1_db", 1);
+            var clone1 = response;
+            console.log(clone1.body;
+            dbPromise.onerror = function(event) {
+              // Do something with request.errorCode!
+              console.log("error");
+            };
 
+            dbPromise.onupgradeneeded = function(event) { 
+              // Save the IDBDatabase interface 
+              var db = event.target.result;
+              if (!db.objectStoreNames.contains('metros')) {
+                console.log("entre en updgtesa");
+                // Create an objectStore for this database
+                db.createObjectStore("metros", {autoIncrement: true});
+              }
+            };
+            console.log("por aqui");
             dbPromise.onsuccess = function(event){
               console.log("entre");
               var db = event.target.result;
               var tx = db.transaction(['metros'], 'readwrite');
               var store = tx.objectStore('metros');
-              var cln = response.clone();
-              store.add(cln);
+              store.add(clone1);
               tx.complete
               return response;
             }
-          return response;
+          }
         })
       );
   }
