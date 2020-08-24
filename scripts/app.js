@@ -135,10 +135,9 @@ app.getSchedule = function getSchedules(key, label) {
     var db = event1.target.result;
     var transaction = db.transaction(["metros"]);
     var objectStore = transaction.objectStore("metros");
-    var request = objectStore.get('https://api-ratp.pierre-grimaud.fr/v3'+key);
+    var request = objectStore.get('https://api-ratp.pierre-grimaud.fr/v3/schedules/'+key);
     request.onsuccess = function(event) {
      // Hacer algo cuando se obtenga el registro.
-      console.log(event.target.result);
       if(event.target.result != undefined){
         var data = event.target.result;
         var response = data;

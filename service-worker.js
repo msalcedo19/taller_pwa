@@ -10,19 +10,6 @@ if (workbox) {
 const CACHE_NAME = 'static-cache-v1';
 const DATA_CACHE_NAME = 'data-cache-v1';
 
-/*workbox.routing.registerRoute(
-   ({request}) => request.destination === 'script',
-  new workbox.strategies.CacheFirst({
-    cacheName: 'static-files',
-    plugins: [
-      new workbox.expiration.ExpirationPlugin({
-        maxEntries: 50,
-        maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
-      })
-    ]
-  })
-);*/
-
 self.addEventListener('activate', (evt) => {
   console.log('[ServiceWorker] Activate');
   // CODELAB: Remove previous cached data from disk.
@@ -39,13 +26,6 @@ self.addEventListener('activate', (evt) => {
   self.clients.claim();
   
   const url = 'https://api-ratp.pierre-grimaud.fr/v3/schedules/metros/1/bastille/A';
-  /*caches.open(DATA_CACHE_NAME).then((cache) => {
-    fetch(url).then((response)=>{
-      if(response.status === 200){
-        cache.put(url, response.clone());
-      }
-    });
-  });*/
   fetch(url).then((response)=>{
       if(response.status === 200){
         return response.json().then(function(json) {
@@ -83,13 +63,6 @@ self.addEventListener('activate', (evt) => {
 const {strategies} = workbox;
 
 self.addEventListener('fetch', (evt) => {
-  /*if (event.request.url.endsWith('.css')) {
-    console.log("entree22");
-    // Using the previously-initialized strategies will work as expected.
-    const cacheFirst = new strategies.CacheFirst({cacheName: 'static-files'});
-    cacheFirst.handle({request: event.request}).then(data=> console.log(data.body));
-    event.respondWith(cacheFirst.handle({request: event.request}));
-  }*/
   
   if (evt.request.url.includes('/schedules/')) {
     console.log('[Service Worker] Fetch (data) from url /schedules/', evt.request.url);
