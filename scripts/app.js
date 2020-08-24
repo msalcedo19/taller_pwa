@@ -131,13 +131,14 @@ app.getSchedule = function getSchedules(key, label) {
     }
   };
 
-  dbPromise.onsuccess = function(event){
-    var db = event.target.result;
+  dbPromise.onsuccess = function(event1){
+    var db = event1.target.result;
     var transaction = db.transaction(["metros"]);
     var objectStore = transaction.objectStore("metros");
-    var request = objectStore.get(key);
+    var request = objectStore.get('https://api-ratp.pierre-grimaud.fr/v3'+key);
     request.onsuccess = function(event) {
      // Hacer algo cuando se obtenga el registro.
+      console.log(event.target.result);
       if(event.target.result != undefined){
         var data = event.target.result;
         var response = data;
@@ -151,7 +152,6 @@ app.getSchedule = function getSchedules(key, label) {
       else{
         fetch('https://api-ratp.pierre-grimaud.fr/v3/schedules/' + key)
           .then((data) => {
-          console.log(data);
             data.json().then(function(json) {
               var response = json;
               var result = {};
@@ -159,7 +159,6 @@ app.getSchedule = function getSchedules(key, label) {
               result.label = label;
               result.created = response._metadata.date;
               result.schedules = response.result.schedules;
-              console.log(result);
               app.updateTimetableCard(result);  
           });
           })

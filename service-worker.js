@@ -96,7 +96,8 @@ self.addEventListener('fetch', (evt) => {
       evt.respondWith(
         fetch(evt.request).then((response)=>{
           if(response.status === 200){
-            return response.json().then(function(json) {
+            var data2 = response.clone();
+            data2.json().then(function(json) {
               // process your JSON further
               var dbPromise = self.indexedDB.open("taller1_db", 1);
               dbPromise.onerror = function(event) {
@@ -122,9 +123,8 @@ self.addEventListener('fetch', (evt) => {
                 store.add(data);
                 tx.complete
               }
-              console.log("llegue");
-              return json;
             });
+            return response;
           }
         })
       );
