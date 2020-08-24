@@ -61,8 +61,7 @@ self.addEventListener('fetch', (evt) => {
   
   if (evt.request.url.includes('/schedules/')) {
     //console.log('[Service Worker] Fetch (data) from url /schedules/', evt.request.url);
-    fetch(evt.request).then((response)=>{
-      
+        
         var dbPromise = self.indexedDB.open("taller1_db", 1);
 
         dbPromise.onerror = function(event) {
@@ -79,20 +78,23 @@ self.addEventListener('fetch', (evt) => {
             db.createObjectStore("metros", {keyPath: 'url'});
           }
         };
+      evt.respondWith(
+      fetch(evt.request).then((response)=>{
 
-        dbPromise.onsuccess = function(event){
-          console.log("entre");
-          var db = event.target.result;
-          var tx = db.transaction(['metros'], 'readwrite');
-          var store = tx.objectStore('metros');
-          var cln = response.json();
-          console.log(cln);
-          store.add(cln);
-          tx.complete
-        }
-      
-        evt.respondWith(response);
-    });
+          dbPromise.onsuccess = function(event){
+            console.log("entre");
+            var db = event.target.result;
+            var tx = db.transaction(['metros'], 'readwrite');
+            var store = tx.objectStore('metros');
+            var cln = response.json();
+            console.log(cln.then(data => console.log(data)));
+            store.add(cln);
+            tx.complete
+            return response;
+          }
+        return;
+      })
+      );
   }
   else{
     //console.log('[Service Worker] Fetch (static-data)', evt.request.url);
