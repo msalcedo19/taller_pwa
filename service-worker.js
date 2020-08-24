@@ -64,36 +64,35 @@ self.addEventListener('fetch', (evt) => {
       evt.respondWith(
         fetch(evt.request).then((response)=>{
           if(response.status === 200){
-            var dbPromise = self.indexedDB.open("taller1_db", 1);
-            var clone1 = response;
-            response.json().then(function(json) {
+            return response.json().then(function(json) {
               // process your JSON further
-            console.log(json.result);
-            });
-            dbPromise.onerror = function(event) {
-              // Do something with request.errorCode!
-              console.log("error");
-            };
+              var dbPromise = self.indexedDB.open("taller1_db", 1);
+              dbPromise.onerror = function(event) {
+                // Do something with request.errorCode!
+                console.log("error");
+              };
 
-            dbPromise.onupgradeneeded = function(event) { 
-              // Save the IDBDatabase interface 
-              var db = event.target.result;
-              if (!db.objectStoreNames.contains('metros')) {
-                console.log("entre en updgtesa");
-                // Create an objectStore for this database
-                db.createObjectStore("metros", {autoIncrement: true});
+              dbPromise.onupgradeneeded = function(event) { 
+                // Save the IDBDatabase interface 
+                var db = event.target.result;
+                if (!db.objectStoreNames.contains('metros')) {
+                  // Create an objectStore for this database
+                  db.createObjectStore("metros", {keyPath: 'url'});
+                }
+              };
+              
+              dbPromise.onsuccess = function(event){
+                var db = event.target.result;
+                var tx = db.transaction(['metros'], 'readwrite');
+                var store = tx.objectStore('metros');
+                var data = json.result;
+                data['url'] = evt.request.url;
+                console.log(data);
+                store.add(data);
+                tx.complete
               }
-            };
-            console.log("por aqui");
-            dbPromise.onsuccess = function(event){
-              console.log("entre");
-              var db = event.target.result;
-              var tx = db.transaction(['metros'], 'readwrite');
-              var store = tx.objectStore('metros');
-              store.add(clone1);
-              tx.complete
-              return response;
-            }
+              return json.result
+            });
           }
         })
       );
