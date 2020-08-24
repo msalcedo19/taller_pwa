@@ -116,14 +116,40 @@
  * @return {Object} The weather forecast, if the request fails, return null.
  */
 function getSchedules(key) {
-  return fetch('https://api-ratp.pierre-grimaud.fr/v3/schedules/' + key)
+  var dbPromise = self.indexedDB.open("taller1_db", 1);
+  dbPromise.onerror = function(event) {
+    // Do something with request.errorCode!
+    console.log("error");
+  };
+
+  dbPromise.onupgradeneeded = function(event) { 
+    // Save the IDBDatabase interface 
+    var db = event.target.result;
+    if (!db.objectStoreNames.contains('metros')) {
+      // Create an objectStore for this database
+      db.createObjectStore("metros", {keyPath: 'url'});
+    }
+  };
+
+  dbPromise.onsuccess = function(event){
+    var db = event.target.result;
+    var transaction = db.transaction(["metros"]);
+    var objectStore = transaction.objectStore("metros");
+    var request = objectStore.get(key);
+    request.onsuccess.then(event => {
+     // Hacer algo cuando se obtenga el registro.
+      if(event.target.result != undefined){
+        return event.target.result;
+      }
+      return fetch('https://api-ratp.pierre-grimaud.fr/v3/schedules/' + key)
       .then((response) => {
         return response.json();
       })
       .catch(() => {
-    console.log("asdas");
         return null;
-      });
+      });;
+    });
+  }
 }
 
 /**
@@ -157,6 +183,7 @@ function getSchedulesFromCache(key) {
     app.getSchedule = function (key, label) {
         getSchedules(key).then(data => {
           console.log('pregunte al cache');
+          console.log(data);
             if(data!=null){
                 var response = data;
                 var result = {};

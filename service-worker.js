@@ -81,73 +81,6 @@ self.addEventListener('activate', (evt) => {
   });
 });
 
-function getFromNetwork(evt){
-   fetch(evt.request).then((response)=>{
-      if(response.status === 200){
-        return response.json().then(function(json) {
-          // process your JSON further
-          var dbPromise = self.indexedDB.open("taller1_db", 1);
-          dbPromise.onerror = function(event) {
-            // Do something with request.errorCode!
-            console.log("error");
-          };
-
-          dbPromise.onupgradeneeded = function(event) { 
-            // Save the IDBDatabase interface 
-            var db = event.target.result;
-            if (!db.objectStoreNames.contains('metros')) {
-              // Create an objectStore for this database
-              db.createObjectStore("metros", {keyPath: 'url'});
-            }
-          };
-
-          dbPromise.onsuccess = function(event){
-            var db = event.target.result;
-            var tx = db.transaction(['metros'], 'readwrite');
-            var store = tx.objectStore('metros');
-            var data = json;
-            data['url'] = evt.request.url;
-            console.log(data);
-            store.add(data);
-            tx.complete
-          }
-          return json.result
-        });
-      }
-    })
-}
-
-function verify(key, evt){
-  var dbPromise = self.indexedDB.open("taller1_db", 1);
-  dbPromise.onerror = function(event) {
-    // Do something with request.errorCode!
-    console.log("error");
-  };
-
-  dbPromise.onupgradeneeded = function(event) { 
-    // Save the IDBDatabase interface 
-    var db = event.target.result;
-    if (!db.objectStoreNames.contains('metros')) {
-      // Create an objectStore for this database
-      db.createObjectStore("metros", {keyPath: 'url'});
-    }
-  };
-
-  return dbPromise.onsuccess = function(event){
-    var db = event.target.result;
-    var transaction = db.transaction(["metros"]);
-    var objectStore = transaction.objectStore("metros");
-    var request = objectStore.get(key);
-    return request.onsuccess = function(event) {
-     // Hacer algo cuando se obtenga el registro.
-      if(event.target.result != undefined){
-        return true;
-      }
-      return false;
-    };
-  }
-}
-
 const {strategies} = workbox;
 
 self.addEventListener('fetch', (evt) => {
@@ -161,9 +94,40 @@ self.addEventListener('fetch', (evt) => {
   
   if (evt.request.url.includes('/schedules/')) {
     //console.log('[Service Worker] Fetch (data) from url /schedules/', evt.request.url);
-      console.log(verify(evt.request.url, evt));
       evt.respondWith(
-   
+        fetch(evt.request).then((response)=>{
+          if(response.status === 200){
+            return response.json().then(function(json) {
+              // process your JSON further
+              var dbPromise = self.indexedDB.open("taller1_db", 1);
+              dbPromise.onerror = function(event) {
+                // Do something with request.errorCode!
+                console.log("error");
+              };
+
+              dbPromise.onupgradeneeded = function(event) { 
+                // Save the IDBDatabase interface 
+                var db = event.target.result;
+                if (!db.objectStoreNames.contains('metros')) {
+                  // Create an objectStore for this database
+                  db.createObjectStore("metros", {keyPath: 'url'});
+                }
+              };
+              
+              dbPromise.onsuccess = function(event){
+                var db = event.target.result;
+                var tx = db.transaction(['metros'], 'readwrite');
+                var store = tx.objectStore('metros');
+                var data = json;
+                data['url'] = evt.request.url;
+                console.log(data);
+                store.add(data);
+                tx.complete
+              }
+              return json.result
+            });
+          }
+        })
       );
   }
   else{
