@@ -76,7 +76,7 @@ self.addEventListener('fetch', (evt) => {
           var db = event.target.result;
           if (!db.objectStoreNames.contains('metros')) {
             // Create an objectStore for this database
-            db.createObjectStore("metros", {keyPath: evt.request});
+            db.createObjectStore("metros", {keyPath: 'url'});
           }
         };
 
@@ -84,8 +84,10 @@ self.addEventListener('fetch', (evt) => {
           console.log("entre");
           var db = event.target.result;
           var tx = db.transaction(['metros'], 'readwrite');
-          var store = tx.objectStore('metros');;
-          store.add(response);
+          var store = tx.objectStore('metros');
+          var cln = response.json();
+          console.log(cln);
+          store.add(cln);
           tx.complete
         }
       
