@@ -71,7 +71,6 @@ self.addEventListener('activate', (evt) => {
             var store = tx.objectStore('metros');
             var data = json;
             data['url'] = url;
-            console.log(data);
             store.add(data);
             tx.complete
           }
@@ -120,7 +119,6 @@ self.addEventListener('fetch', (evt) => {
                 var store = tx.objectStore('metros');
                 var data = json;
                 data['url'] = evt.request.url;
-                console.log(data);
                 store.add(data);
                 tx.complete
               }

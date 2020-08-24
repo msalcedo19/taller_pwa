@@ -115,7 +115,7 @@
  * @param {string} coords Location object to.
  * @return {Object} The weather forecast, if the request fails, return null.
  */
-function getSchedules(key) {
+app.getSchedule = function getSchedules(key, label) {
   var dbPromise = self.indexedDB.open("taller1_db", 1);
   dbPromise.onerror = function(event) {
     // Do something with request.errorCode!
@@ -136,19 +136,38 @@ function getSchedules(key) {
     var transaction = db.transaction(["metros"]);
     var objectStore = transaction.objectStore("metros");
     var request = objectStore.get(key);
-    request.onsuccess.then(event => {
+    request.onsuccess = function(event) {
      // Hacer algo cuando se obtenga el registro.
       if(event.target.result != undefined){
-        return event.target.result;
+        var data = event.target.result;
+        var response = data;
+        var result = {};
+        result.key = key;
+        result.label = label;
+        result.created = response._metadata.date;
+        result.schedules = response.result.schedules;
+        app.updateTimetableCard(result);    
       }
-      return fetch('https://api-ratp.pierre-grimaud.fr/v3/schedules/' + key)
-      .then((response) => {
-        return response.json();
-      })
-      .catch(() => {
-        return null;
-      });;
-    });
+      else{
+        fetch('https://api-ratp.pierre-grimaud.fr/v3/schedules/' + key)
+          .then((response) => {
+              response.json().then(function(json) {
+                var data = response.json();
+              console.log(response);
+                var result = {};
+                result.key = key;
+                result.label = label;
+                result.created = response._metadata.date;
+                result.schedules = response.result.schedules;
+                console.log(result);
+                app.updateTimetableCard(result);  
+              });       
+          })
+          .catch((e) => {
+            console.log(e);
+          });;
+      }
+    };
   }
 }
 
@@ -180,10 +199,9 @@ function getSchedulesFromCache(key) {
 }
 
 
-    app.getSchedule = function (key, label) {
-        getSchedules(key).then(data => {
+    /*app.getSchedule = function (key, label) {
+        getSchedules(key, label).then(data => {
           console.log('pregunte al cache');
-          console.log(data);
             if(data!=null){
                 var response = data;
                 var result = {};
@@ -196,7 +214,7 @@ function getSchedulesFromCache(key) {
         });
     }
       
-        /*getSchedulesFromNetwork(key).then(data => {
+        getSchedulesFromNetwork(key).then(data => {
             if(data!=null){
               console.log("entre a preguntar a la red.");
               var response = data;
