@@ -150,18 +150,18 @@ app.getSchedule = function getSchedules(key, label) {
       }
       else{
         fetch('https://api-ratp.pierre-grimaud.fr/v3/schedules/' + key)
-          .then((response) => {
-              response.json().then(function(json) {
-                var data = response.json();
-              console.log(response);
-                var result = {};
-                result.key = key;
-                result.label = label;
-                result.created = response._metadata.date;
-                result.schedules = response.result.schedules;
-                console.log(result);
-                app.updateTimetableCard(result);  
-              });       
+          .then((data) => {
+          console.log(data);
+            data.json().then(function(json) {
+              var response = json;
+              var result = {};
+              result.key = key;
+              result.label = label;
+              result.created = response._metadata.date;
+              result.schedules = response.result.schedules;
+              console.log(result);
+              app.updateTimetableCard(result);  
+          });
           })
           .catch((e) => {
             console.log(e);

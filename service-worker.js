@@ -92,7 +92,7 @@ self.addEventListener('fetch', (evt) => {
   }*/
   
   if (evt.request.url.includes('/schedules/')) {
-    //console.log('[Service Worker] Fetch (data) from url /schedules/', evt.request.url);
+    console.log('[Service Worker] Fetch (data) from url /schedules/', evt.request.url);
       evt.respondWith(
         fetch(evt.request).then((response)=>{
           if(response.status === 200){
@@ -122,7 +122,8 @@ self.addEventListener('fetch', (evt) => {
                 store.add(data);
                 tx.complete
               }
-              return json.result
+              console.log("llegue");
+              return json;
             });
           }
         })
